@@ -67,6 +67,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.navigation:navigation-compose:2.9.6")
     implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
+    implementation("androidx.compose.material:material-icons-extended")
 
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:3.0.0")
@@ -80,6 +81,8 @@ dependencies {
 
     // Unit testing
     testImplementation("junit:junit:4.13.2")
+    testImplementation("io.mockk:mockk:1.13.10")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
 
     // UI testing
     androidTestImplementation("androidx.test.ext:junit:1.3.0")

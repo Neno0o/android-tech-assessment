@@ -1,4 +1,4 @@
-package com.pelagohealth.codingchallenge.data
+package com.pelagohealth.codingchallenge.di
 
 import com.pelagohealth.codingchallenge.data.datasource.rest.FactsRestApi
 import com.squareup.moshi.Moshi
@@ -10,29 +10,30 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import javax.inject.Singleton
 
-/**
- * Hilt module that provides dependencies for the data layer.
- */
 @Module
 @InstallIn(SingletonComponent::class)
-class DataModule {
+class NetworkModule {
 
     @Provides
+    @Singleton
     fun provideOkHttp(): OkHttpClient = OkHttpClient.Builder().build()
 
     @Provides
-    fun provideFactsApi(okHttpClient: OkHttpClient): FactsRestApi =
-        Retrofit.Builder()
+    @Singleton
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
             .baseUrl("https://uselessfacts.jsph.pl/api/v2/")
-            .client(okHttpClient)
-            .addConverterFactory(
+            .client(okHttpClient).addConverterFactory(
                 MoshiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                    Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
                 )
-            )
-            .build()
-            .create(FactsRestApi::class.java)
+            ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFactsApi(retrofit: Retrofit): FactsRestApi =
+        retrofit.create(FactsRestApi::class.java)
 }
