@@ -1,5 +1,6 @@
 package com.pelagohealth.codingchallenge.domain.usecase
 
+import android.util.Log
 import com.pelagohealth.codingchallenge.domain.model.Fact
 import com.pelagohealth.codingchallenge.domain.repository.FactRepository
 import javax.inject.Inject
@@ -14,7 +15,7 @@ class FetchNewFactUseCase
                 try {
                     repository.saveToHistory(currentFact)
                 } catch (e: Exception) {
-                    println("Failed to save history: $e")
+                    Log.e("FetchNewFactUseCase", "Failed to save history: $e")
                 }
             }
 
