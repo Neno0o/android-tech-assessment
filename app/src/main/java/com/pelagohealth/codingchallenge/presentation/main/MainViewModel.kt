@@ -13,7 +13,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class MainViewModel
+@Inject constructor(
     private val fetchNewFactUseCase: FetchNewFactUseCase
 ) : ViewModel() {
 
@@ -26,16 +27,23 @@ class MainViewModel @Inject constructor(
 
     fun loadFact() {
         viewModelScope.launch {
-            _uiState.update { it.copy(loading = true) }
+            _uiState.update { it.copy(loading = true, error = null) }
 
             val currentFact = _uiState.value.current
 
             fetchNewFactUseCase(currentFact)
                 .onSuccess { newFact ->
-                    _uiState.update { it.copy(current = newFact, loading = false) }
+                    _uiState.update {
+                        it.copy(current = newFact, loading = false)
+                    }
                 }
                 .onFailure { e ->
-                    _uiState.update { it.copy(loading = false) }
+                    _uiState.update {
+                        it.copy(
+                            loading = false,
+                            error = e.localizedMessage ?: "An unexpected error occurred"
+                        )
+                    }
                 }
         }
     }
@@ -43,5 +51,6 @@ class MainViewModel @Inject constructor(
     data class MainScreenState(
         val current: Fact? = null,
         val loading: Boolean = false,
+        val error: String? = null
     )
 }

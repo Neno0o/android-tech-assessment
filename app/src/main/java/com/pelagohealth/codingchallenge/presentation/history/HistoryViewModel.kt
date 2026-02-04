@@ -17,8 +17,15 @@ class HistoryViewModel @Inject constructor(
 ) : ViewModel() {
 
     val state: StateFlow<HistoryScreenState> = getHistoryUseCase()
-        .map { historyList ->
-            HistoryScreenState(facts = historyList)
+        .map { result ->
+            result.fold(
+                onSuccess = { historyList ->
+                    HistoryScreenState(facts = historyList, loading = false)
+                },
+                onFailure = {
+                    HistoryScreenState(facts = emptyList(), loading = false)
+                }
+            )
         }
         .stateIn(
             scope = viewModelScope,

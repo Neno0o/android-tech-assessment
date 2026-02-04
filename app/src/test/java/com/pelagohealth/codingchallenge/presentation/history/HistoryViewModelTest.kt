@@ -31,7 +31,7 @@ class HistoryViewModelTest {
     @Test
     fun `state starts with loading true and null facts`() = runTest {
         // Given
-        every { getHistoryUseCase() } returns MutableStateFlow(emptyList())
+        every { getHistoryUseCase() } returns MutableStateFlow(Result.success(emptyList()))
 
         // When
         viewModel = HistoryViewModel(getHistoryUseCase)
@@ -43,10 +43,11 @@ class HistoryViewModelTest {
     }
 
     @Test
-    fun `state updates with facts when use case emits data`() = runTest {
+    fun `state updates with facts when use case emits Success`() = runTest {
         // Given
         val expectedFacts = listOf(Fact("Fact 1", "url"), Fact("Fact 2", "url"))
-        every { getHistoryUseCase() } returns flowOf(expectedFacts)
+
+        every { getHistoryUseCase() } returns flowOf(Result.success(expectedFacts))
 
         viewModel = HistoryViewModel(getHistoryUseCase)
 
@@ -64,7 +65,7 @@ class HistoryViewModelTest {
     @Test
     fun `state updates correctly when history is empty`() = runTest {
         // Given
-        every { getHistoryUseCase() } returns flowOf(emptyList())
+        every { getHistoryUseCase() } returns flowOf(Result.success(emptyList()))
 
         viewModel = HistoryViewModel(getHistoryUseCase)
 
@@ -77,5 +78,24 @@ class HistoryViewModelTest {
         val state = viewModel.state.value
         assertTrue("Facts list should be empty", state.facts!!.isEmpty())
         assertFalse(state.loading)
+    }
+
+    @Test
+    fun `state handles Failure by showing empty list`() = runTest {
+        // Given
+        val exception = Exception("Database Error")
+        every { getHistoryUseCase() } returns flowOf(Result.failure(exception))
+
+        viewModel = HistoryViewModel(getHistoryUseCase)
+
+        // When
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect()
+        }
+
+        // Then
+        val state = viewModel.state.value
+        assertTrue("Facts list should be empty on failure", state.facts!!.isEmpty())
+        assertFalse("Loading should stop on failure", state.loading)
     }
 }

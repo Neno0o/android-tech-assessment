@@ -1,5 +1,6 @@
 package com.pelagohealth.codingchallenge.presentation.main
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -60,6 +61,16 @@ fun MainScreen(
         ) {
             if (state.loading) {
                 CircularProgressIndicator()
+            } else if (state.error != null) {
+                Text(
+                    text = "Error: ${state.error}",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(16.dp)
+                )
+
+                Button(onClick = onFetchNewFact) {
+                    Text("Retry")
+                }
             } else {
                 FactCard(fact = state.current)
             }
@@ -132,7 +143,12 @@ fun FactCard(fact: Fact?) {
     }
 }
 
-@Preview(showBackground = true, name = "Loaded State")
+@Preview(showBackground = true, name = "Loaded State - Light")
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    name = "Loaded State - Dark"
+)
 @Composable
 fun MainScreenPreview() {
     PelagoCodingChallengeTheme {
@@ -147,7 +163,11 @@ fun MainScreenPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "Loading State")
+@Preview(showBackground = true, name = "Loading State - Light")
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES, name = "Loading State - Dark"
+)
 @Composable
 fun MainScreenLoadingPreview() {
     PelagoCodingChallengeTheme {

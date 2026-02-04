@@ -4,19 +4,21 @@ import com.pelagohealth.codingchallenge.domain.model.Fact
 import com.pelagohealth.codingchallenge.domain.repository.FactRepository
 import javax.inject.Inject
 
-class FetchNewFactUseCase @Inject constructor(
+class FetchNewFactUseCase
+@Inject constructor(
     private val repository: FactRepository
 ) {
-
     suspend operator fun invoke(currentFact: Fact?): Result<Fact> {
-        val result = repository.fetchFactFromApi()
-
-        result.onSuccess {
+        return repository.fetchFactFromApi().map { newFact ->
             if (currentFact != null) {
-                repository.saveToHistory(currentFact)
+                try {
+                    repository.saveToHistory(currentFact)
+                } catch (e: Exception) {
+                    println("Failed to save history: $e")
+                }
             }
-        }
 
-        return result
+            newFact
+        }
     }
 }

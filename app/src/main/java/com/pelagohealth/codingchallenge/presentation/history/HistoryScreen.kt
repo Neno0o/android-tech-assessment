@@ -1,5 +1,6 @@
 package com.pelagohealth.codingchallenge.presentation.history
 
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -163,7 +164,12 @@ fun EmptyHistoryState(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(showBackground = true, name = "History List")
+@Preview(showBackground = true, name = "History List - Light")
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    name = "History List - Dark"
+)
 @Composable
 fun HistoryScreenPreview() {
     PelagoCodingChallengeTheme {
@@ -180,7 +186,12 @@ fun HistoryScreenPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "Empty History")
+@Preview(showBackground = true, name = "Empty History - Light")
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    name = "Empty History - Dark"
+)
 @Composable
 fun HistoryScreenEmptyPreview() {
     PelagoCodingChallengeTheme {
